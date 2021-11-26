@@ -1,0 +1,5 @@
+<library path="lib/libCameraRepublisher">
+  <class name="camera_republisher/CameraRepublisher" type="camera_republisher::CameraRepublisher" base_class_type="nodelet::Nodelet">
+    <description>CameraRepublisher nodelet</description>
+  </class>
+</library>

@@ -1,0 +1,36 @@
+<launch>
+
+  <arg name="UAV_NAME" default="$(optenv UAV_NAME uav)" />
+
+  <arg name="node_name" default="camera_republisher" />
+
+  <group ns="$(arg UAV_NAME)">
+
+    <!-- new static transform for the camera -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="bluefox_tf" args="0.10 0.0 0.0 -1.57 0.0 -1.57 $(arg UAV_NAME)/fcu $(arg UAV_NAME)/bluefox_front" />
+
+    <!-- republish the camera images -->
+    <node pkg="image_transport" type="republish" name="compressed_to_raw" args="compressed in:=bluefox_front/image_raw raw out:=bluefox_front/image_raw" />
+
+    <!-- camera republisher -->
+    <node pkg="nodelet" type="nodelet" name="$(arg node_name)" args="standalone camera_republisher/CameraRepublisher" output="screen">
+
+      <rosparam file="$(find camera_republisher)/config/example.yaml" />
+
+      <param name="frame" value="$(arg UAV_NAME)/bluefox_front" />
+
+      <remap from="~camera_info_out" to="~camera_info" />
+
+        <!-- subscribers -->
+
+      <remap from="~image_in" to="bluefox_front/image_raw" />
+
+        <!-- publishers -->
+
+      <remap from="~image_out" to="~image_raw" />
+
+    </node>
+
+  </group>
+
+</launch>
